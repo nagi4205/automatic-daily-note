@@ -1,6 +1,8 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 
+// サーバーを起動することはないはず
+
 const app = new Hono()
 
 app.get('/', (c) => {
