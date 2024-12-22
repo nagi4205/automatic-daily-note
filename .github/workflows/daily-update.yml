@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 0 * * *'  # 毎日UTC 00:00 (日本時間 09:00) に実行
   workflow_dispatch:
-    inputs: 
+    inputs:
       branch:
         description: 'Branch to run on'
         required: true
@@ -12,6 +12,7 @@ on:
         type: choice
         options:
           - github-actions
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -20,31 +21,29 @@ jobs:
         with:
           ref: github-actions
           fetch-depth: 0
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: latest
-          
+
       - name: Install dependencies
         run: pnpm install
-          
+
       - name: Generate daily content
         run: pnpm run generate
-          
+
       - name: Setup Git
         run: |
           git config --global user.name "${{ secrets.GIT_USER_NAME }}"
           git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
-          
+
       - name: Commit and push if changed
         run: |
           git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Daily Update: $(date +'%Y-%m-%d')" && git push)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Daily Update: $(date +'%Y-%m-%d')" && git push https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }})
