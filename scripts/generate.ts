@@ -18,7 +18,7 @@ async function fetchDailyEvent(): Promise<{ event: string, timestamp: string }> 
     console.error('イベント取得中にエラーが発生しました:', error)
     throw error
   }
-}
+}　
 
 async function generateDailyContent() {
   try {
