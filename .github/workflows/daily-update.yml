@@ -2,16 +2,8 @@ name: Daily Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 毎日UTC 00:00 (日本時間 09:00) に実行
+    - cron: '0 0 * * *' # 毎日UTC 00:00 (日本時間 09:00) に実行
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to run on'
-        required: true
-        default: 'github-actions'
-        type: choice
-        options:
-          - github-actions
 
 jobs:
   update:
@@ -46,4 +38,4 @@ jobs:
       - name: Commit and push if changed
         run: |
           git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Daily Update: $(date +'%Y-%m-%d')" && git push https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }})
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Daily Update: $(date +'%Y-%m-%d')" && git push https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }} HEAD:github-actions)
