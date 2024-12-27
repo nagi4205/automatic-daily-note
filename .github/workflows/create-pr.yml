@@ -1,0 +1,37 @@
+name: Create Pull Request to main
+
+on:
+  push:
+    branches:
+      - github-actions
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "${{ secrets.GIT_USER_NAME }}"
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+
+      - name: Read title from template file
+        id: read_title
+        run: |
+          PR_TITLE=$(cat .github/title-template.txt)
+          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
+
+      - name: Create a Pull Request from github-actions to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: github-actions
+          title: ${{ env.PR_TITLE }}
+          body: |
+            This PR was automatically created to merge the changes from `github-actions` into `main`.
+            Please review the changes before merging.
+          labels: 'auto-merge'
