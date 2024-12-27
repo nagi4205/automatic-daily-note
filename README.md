@@ -1,8 +1,3 @@
-```
-npm install
-npm run dev
-```
+### GitHub Action　を使った自動草生成リポジトリ
 
-```
-open http://localhost:3000
-```
+.github/workflows/daily-update.yml を参照のこと

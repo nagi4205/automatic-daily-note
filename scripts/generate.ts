@@ -1,47 +1,43 @@
-import fs from 'fs'
-import path from 'path'
+import * as fs from 'fs';
+import * as path from 'path';
+import { generatedFilePath } from '../src/const/generatedFilePath.js';
+import { DailyNoteService } from '../src/services/DailyNoteService.js';
 
-async function fetchDailyEvent(): Promise<{ event: string, timestamp: string }> {
+/**
+ * 指定されたディレクトリに日記ファイルを生成する関数
+ *
+ * - 日付に基づいて `daily-notes/年/月/日.md` 形式でファイルを保存する
+ * - ディレクトリが存在しない場合は作成し、日記の内容を書き込む
+ */
+async function generateDailyNote() {
   try {
-    const events = [
-      '何もなかった日',
-      '東京湾に隕石落下',
-      '近所の公園で虹を見た',
-      'コンビニの新商品を試した',
-      '突然の雨に遭遇'
-    ]
-    return {
-      event: events[Math.floor(Math.random() * events.length)],
-      timestamp: new Date().toISOString()
-    }
-  } catch (error) {
-    console.error('イベント取得中にエラーが発生しました:', error)
-    throw error
-  }
-}　
+    const dailyNoteService = DailyNoteService.create();
+    const result = dailyNoteService.generateDailyNote();
 
-async function generateDailyContent() {
-  try {
-    const { event, timestamp } = await fetchDailyEvent()
-    const date = new Date(timestamp)
-    const fileName = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}.md`
-    
-    const contentDir = path.join(process.cwd(), 'content')
-    if (!fs.existsSync(contentDir)) {
-      await fs.promises.mkdir(contentDir, { recursive: true })
+    const date = new Date(dailyNoteService.getTimestamp());
+
+    const directoryPath = path.join(
+      process.cwd(),
+      generatedFilePath,
+      String(date.getFullYear()),
+      String(date.getMonth() + 1).padStart(2, '0'),
+    );
+
+    if (!fs.existsSync(directoryPath)) {
+      await fs.promises.mkdir(directoryPath, { recursive: true });
     }
-    
-    const content = `### ${date.toLocaleDateString('ja-JP')}の出来事\n\n${event}\n\n_更新時刻: ${timestamp}_`
-    
-    await fs.promises.writeFile(path.join(contentDir, fileName), content)
-    console.log(`Generated content for ${fileName}`)
+
+    const fileName = `${String(date.getDate()).padStart(2, '0')}.md`;
+
+    await fs.promises.writeFile(path.join(directoryPath, fileName), result);
+    console.log(`Generated daily note: ${fileName} in ${directoryPath}`);
   } catch (error) {
-    console.error('コンテンツ生成中にエラーが発生しました:', error)
-    throw error
+    console.error('エラーが発生しました:', error);
+    throw error;
   }
 }
 
-generateDailyContent().catch(error => {
-  console.error('アプリケーションエラー:', error)
-  process.exit(1)
-})
+generateDailyNote().catch((error) => {
+  console.error('アプリケーションエラー:', error);
+  process.exit(1);
+});
