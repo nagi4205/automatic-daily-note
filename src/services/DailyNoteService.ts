@@ -1,5 +1,5 @@
-import { Event } from '../domain/Event';
-import { Timestamp } from '../domain/Timestamp';
+import { Event } from '../domain/Event.js';
+import { Timestamp } from '../domain/Timestamp.js';
 
 export class DailyNoteService {
   private timestamp: Timestamp;
@@ -15,11 +15,7 @@ export class DailyNoteService {
   }
 
   public generateDailyNote(): string {
-    return `### ${this.timestamp.getFormattedDate()}\n
-    \n
-    ${this.event.getEvent()}\n
-    \n
-    _更新時刻: ${this.timestamp.getFormattedTime()}_`;
+    return `### ${this.timestamp.getFormattedDate()}\n${this.event.getEvent()}\n\n_更新時刻: ${this.timestamp.getFormattedTime()}_`;
   }
 
   public getTimestamp(): string {

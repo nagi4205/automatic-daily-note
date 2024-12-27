@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { generatedFilePath } from '../src/const/generatedFilePath';
-import { DailyNoteService } from '../src/services/DailyNoteService';
+import { generatedFilePath } from '../src/const/generatedFilePath.js';
+import { DailyNoteService } from '../src/services/DailyNoteService.js';
 
 /**
  * 指定されたディレクトリに日記ファイルを生成する関数
